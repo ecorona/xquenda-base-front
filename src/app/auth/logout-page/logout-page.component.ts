@@ -12,12 +12,23 @@ export class LogoutPageComponent implements AfterViewInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   loggedOut = false;
+  tiempoRestante = 5;
 
   ngAfterViewInit(): void {
     this.authService.logout();
     this.loggedOut = true;
-    setTimeout(() => {
-      this.router.navigate(['/'], { replaceUrl: true, relativeTo: null });
-    }, 5000);
+    this.countDown();
+  }
+
+  countDown() {
+    let seconds = 5;
+    const interval = setInterval(() => {
+      seconds--;
+      this.tiempoRestante = seconds;
+      if (seconds === 0) {
+        clearInterval(interval);
+        this.router.navigate(['/'], { replaceUrl: true, relativeTo: null });
+      }
+    }, 1000);
   }
 }
