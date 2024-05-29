@@ -1,0 +1,22 @@
+<nav class="flex justify-between gap-5 text-gray-700 dark:text-gray-300">
+  <span class="flex">
+    <span class="font-semibold text-gray-700 px-5 dark:text-gray-300">
+      {{appTitle}}
+    </span>
+    <span class="flex gap-5">
+      @if(!userIdentity){
+      <a routerLink="/landing-page" routerLinkActive="font-semibold dark:text-gray-200">Inicio</a>
+      }@else {
+      <a routerLink="/admin/home" routerLinkActive="font-semibold dark:text-gray-200">Home</a>
+      }
+    </span>
+  </span>
+  <span class="flex gap-5">
+    @if(userIdentity){
+    <a routerLink="/admin/perfil" routerLinkActive="font-semibold dark:text-gray-200">Mi perfil</a>
+    <a routerLink="/auth/logout" routerLinkActive="font-semibold dark:text-gray-200">Logout</a>
+    }@else {
+    <a routerLink="/auth/login" routerLinkActive="font-semibold dark:text-gray-200">Iniciar Sesión</a>
+    }
+  </span>
+</nav>
