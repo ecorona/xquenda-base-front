@@ -11,12 +11,10 @@ import { Router, RouterLink } from '@angular/router';
 export class LogoutPageComponent implements AfterViewInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  loggedOut = false;
   tiempoRestante = 5;
 
   ngAfterViewInit(): void {
     this.authService.logout();
-    this.loggedOut = true;
     this.countDown();
   }
 

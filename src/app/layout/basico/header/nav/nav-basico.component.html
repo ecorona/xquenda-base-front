@@ -1,9 +1,12 @@
 <nav class="flex justify-between gap-5 text-gray-700 dark:text-gray-300">
   <span class="flex">
+    <span class="inline-block sm:hidden">
+      <mat-icon>menu</mat-icon>
+    </span>
     <span class="font-semibold text-gray-700 px-5 dark:text-gray-300">
       {{appTitle}}
     </span>
-    <span class="flex gap-5">
+    <span class="sm:flex gap-5 hidden">
       @if(!userIdentity){
       <a routerLink="/landing-page" routerLinkActive="font-semibold dark:text-gray-200">Inicio</a>
       }@else {
@@ -11,14 +14,16 @@
       }
       <a routerLink="/about" routerLinkActive="font-semibold dark:text-gray-200">Acerca de...</a>
     </span>
-
   </span>
-  <span class="flex gap-5">
+  <span class="sm:hidden flex gap-5">
+    <mat-icon>person</mat-icon>
+  </span>
+  <span class="sm:flex gap-5 hidden">
     @if(userIdentity){
     <a routerLink="/admin/perfil" routerLinkActive="font-semibold dark:text-gray-200">Mi perfil</a>
     <a routerLink="/auth/logout" routerLinkActive="font-semibold dark:text-gray-200">Logout</a>
     }@else {
-    <a routerLink="/auth/login" routerLinkActive="font-semibold dark:text-gray-200">Iniciar Sesión</a>
+    <a routerLink="/auth/login" routerLinkActive="hidden">Iniciar Sesión</a>
     }
   </span>
 </nav>
