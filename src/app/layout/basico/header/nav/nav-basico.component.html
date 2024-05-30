@@ -19,11 +19,11 @@
     <mat-icon>person</mat-icon>
   </span>
   <span class="sm:flex gap-5 hidden">
-    @if(userIdentity){
+    @if(!userIdentity){
+    <a routerLink="/auth/login" routerLinkActive="hidden">Iniciar Sesión</a>
+    }@else {
     <a routerLink="/admin/perfil" routerLinkActive="font-semibold dark:text-gray-200">Mi perfil</a>
     <a routerLink="/auth/logout" routerLinkActive="font-semibold dark:text-gray-200">Logout</a>
-    }@else {
-    <a routerLink="/auth/login" routerLinkActive="hidden">Iniciar Sesión</a>
     }
   </span>
 </nav>
