@@ -4,5 +4,10 @@ import { inject } from '@angular/core';
 import { AuthService } from '../../auth/services/auth.service';
 
 export const perfilResolver: ResolveFn<UsuarioIdentityDTO> = (route, state) => {
-  return inject(AuthService).getPerfil();
+  const authService = inject(AuthService);
+  const userLoaded = authService.userSignal();
+  if (userLoaded?.id) {
+    return userLoaded;
+  }
+  return authService.getPerfil();
 };
