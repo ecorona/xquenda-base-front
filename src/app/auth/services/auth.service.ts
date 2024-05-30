@@ -5,6 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { LoginResponseDTO } from '../dto/login-response.dto';
 import { environment } from '../../../environments/environment.development';
 import { UsuarioIdentityDTO } from '../dto/usuario-identity.dto';
+import { SocketService } from '../../common/services/web-socket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ import { UsuarioIdentityDTO } from '../dto/usuario-identity.dto';
 export class AuthService {
   userSignal = signal<UsuarioIdentityDTO | null>(null);
   private readonly http = inject(HttpClient);
+  private readonly socketService = inject(SocketService);
 
   login(body: LoginRequestDto): Observable<LoginResponseDTO> {
     return this.http
@@ -19,6 +21,7 @@ export class AuthService {
       .pipe(
         tap((response) => {
           this.token = response.access_token;
+          this.socketService.setToken(response.access_token);
         })
       );
   }
@@ -36,6 +39,7 @@ export class AuthService {
   logout(): void {
     this.token = null;
     this.userIdentity = null;
+    this.socketService.setToken('');
   }
 
   get token(): string | null {
