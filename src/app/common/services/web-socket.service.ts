@@ -2,13 +2,14 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { io } from 'socket.io-client';
 import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { EventosAdmin } from './eventos-admin.enum';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SocketService {
   // eventos personalizados
-  public events = new Subject<{
+  private events = new Subject<{
     event: string;
     data?: { [key: string]: any };
   }>();
@@ -49,7 +50,7 @@ export class SocketService {
     autoConnect: false,
     reconnection: true,
     withCredentials: true,
-    path: '/socket.io',
+    path: '/admin',
     auth: {
       token: localStorage.getItem('token') || '',
     },
@@ -81,10 +82,22 @@ export class SocketService {
       this.conectando = false;
       this.joinChannels();
       this.events.next({ event: 'connect' });
+
+      setTimeout(() => {
+        this.sendEvent('mensaje', {
+          texto: 'Hola desde el cliente',
+          data: {
+            foo: 'bar',
+          },
+        }).then((response) => {
+          console.log('SocketService > sendEvent > response:', response);
+        });
+      }, 5000);
     });
     this.socket.on('disconnect', () => {
       this.conectado = false;
       console.log('SocketService > disconnected');
+      this.offEvents();
       this.events.next({ event: 'disconnect' });
     });
     this.socket.on('reconnecting', () => {
@@ -97,6 +110,22 @@ export class SocketService {
     this.socket.on('exception', (err) => {
       console.log('SocketService > exception:', err);
     });
+
+    //eventos que llegan por el websocket
+    this.socket.on(
+      EventosAdmin.usuario_entrando,
+      (data: { correo: string }) => {
+        console.log(`SocketService > ${EventosAdmin.usuario_entrando} :`, data);
+        this.events.next({ event: EventosAdmin.usuario_entrando, data });
+      }
+    );
+    this.socket.on(
+      EventosAdmin.usuario_saliendo,
+      (data: { correo: string }) => {
+        console.log(`SocketService > ${EventosAdmin.usuario_saliendo} :`, data);
+        this.events.next({ event: EventosAdmin.usuario_saliendo, data });
+      }
+    );
   }
 
   private offEvents(): void {
@@ -111,10 +140,12 @@ export class SocketService {
   ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       try {
+        console.log('Sending event:', event, data);
         this.socket.once(event, (response) => {
+          //prepararse para la respuesta de este evento que voy a enviar
           resolve(response);
         });
-        this.socket.emit(event, data);
+        this.socket.emit(event, data); //enviar evento
       } catch (error) {
         reject(error);
       }
@@ -124,7 +155,7 @@ export class SocketService {
   async joinChannels(): Promise<boolean> {
     if (this.token) {
       console.log('Joining socket channels...');
-      const response = await this.sendEvent('canales', null);
+      const response = await this.sendEvent(EventosAdmin.canales, null);
       console.log('SocketService > joinChannels > response:', response);
     }
     return false;
