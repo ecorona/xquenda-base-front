@@ -11,6 +11,7 @@ import { AuthService } from './auth/services/auth.service';
 import { SocketService } from './common/services/web-socket.service';
 import { AuthUtils } from './auth/auth.utils';
 import { Subject, filter, takeUntil } from 'rxjs';
+import { EventosAdmin } from './common/services/eventos-admin.enum';
 
 @Component({
   selector: 'app-root',
@@ -39,7 +40,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const eventosFiltrados = ['usuario-entrando', 'usuario-salendo'];
+    const eventosFiltrados: Array<EventosAdmin> = [
+      EventosAdmin.usuario_entrando,
+      EventosAdmin.usuario_saliendo,
+    ];
     this.socketService.events$
       .pipe(
         takeUntil(this.unsubscribeAll),

@@ -10,7 +10,7 @@ import { EventosAdmin } from './eventos-admin.enum';
 export class SocketService {
   // eventos personalizados
   private events = new Subject<{
-    event: string;
+    event: EventosAdmin;
     data?: { [key: string]: any };
   }>();
   private conectadoSubject: BehaviorSubject<boolean> =
@@ -26,7 +26,7 @@ export class SocketService {
     return this.conectandoSubject.asObservable();
   }
 
-  get events$(): Observable<{ event: string; data?: any }> {
+  get events$(): Observable<{ event: EventosAdmin; data?: any }> {
     return this.events.asObservable();
   }
   set conectando(val: boolean) {
@@ -76,12 +76,12 @@ export class SocketService {
   }
 
   private setEvents(): void {
-    this.socket.on('connect', () => {
+    this.socket.on(EventosAdmin.connect, () => {
       console.log('SocketService > connected');
       this.conectado = true;
       this.conectando = false;
       this.joinChannels();
-      this.events.next({ event: 'connect' });
+      this.events.next({ event: EventosAdmin.connect });
 
       setTimeout(() => {
         this.sendEvent('mensaje', {
@@ -94,11 +94,11 @@ export class SocketService {
         });
       }, 5000);
     });
-    this.socket.on('disconnect', () => {
+    this.socket.on(EventosAdmin.disconnect, () => {
       this.conectado = false;
       console.log('SocketService > disconnected');
       this.offEvents();
-      this.events.next({ event: 'disconnect' });
+      this.events.next({ event: EventosAdmin.disconnect });
     });
     this.socket.on('reconnecting', () => {
       this.conectando = true;
